@@ -8,7 +8,7 @@ sudo apt-get install python3-pip
 sudo pip3 install rpi_ws281x adafruit-circuitpython-neopixel
 sudo python3 -m pip install --force-reinstall adafruit-blinka
 
-# sudo pip3 install flask # Dont need it
+// sudo pip3 install flask // Dont need it
 
 sudo apt-get install mosquitto mosquitto-clients
 
@@ -25,9 +25,8 @@ COMMANDS:
 {"temperature": {"temp": 23.25,"humidity": 65.5,"tempScale": "celcius"}}
 
 
-
+Commandline start temperature server:
 $ nohup sudo python3 raspberrypi_dustzo_controller/MQTT_temperature_publish.py &
+
+Commandline start Dutzo Controller
 $ sudo python3 raspberrypi_dustzo_controller/MQTT_Dutzo_controller.py
-=======
-# Dutzo_Controller
->>>>>>> 890f7bc5a9d02a4c19e1c7aac11561f8f81dd764
