@@ -1,11 +1,15 @@
 # Dutzo_Controller
 
 sudo apt-get install git
+
 git config --global user.email "keiko@keikoware.dk"
+
 git config --global user.name "KeikoWare"
 
 sudo apt-get install python3-pip
+
 sudo pip3 install rpi_ws281x adafruit-circuitpython-neopixel
+
 sudo python3 -m pip install --force-reinstall adafruit-blinka
 
 // sudo pip3 install flask // Dont need it
@@ -16,6 +20,7 @@ sudo pip3 install paho-mqtt
 
 
 COMMANDS:
+
 {"setMode": {"newMode": "colorRGB"}}
 
 {"setMode": {"newMode": "temperature"}}
@@ -26,7 +31,9 @@ COMMANDS:
 
 
 Commandline start temperature server:
+
 $ nohup sudo python3 raspberrypi_dustzo_controller/MQTT_temperature_publish.py &
 
-Commandline start Dutzo Controller
+Commandline start Dutzo Controller:
+
 $ sudo python3 raspberrypi_dustzo_controller/MQTT_Dutzo_controller.py
