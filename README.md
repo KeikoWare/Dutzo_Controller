@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Dutzo_Controller
 
 sudo apt-get install git
@@ -18,9 +17,13 @@ sudo pip3 install paho-mqtt
 
 COMMANDS:
 {"setMode": {"newMode": "colorRGB"}}
+
 {"setMode": {"newMode": "temperature"}}
+
 {"colorRGB": [0,128,128]}
+
 {"temperature": {"temp": 23.25,"humidity": 65.5,"tempScale": "celcius"}}
+
 
 
 $ nohup sudo python3 raspberrypi_dustzo_controller/MQTT_temperature_publish.py &
