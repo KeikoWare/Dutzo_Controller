@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dutzo_Controller
 
 sudo apt-get install git
@@ -24,3 +25,6 @@ COMMANDS:
 
 $ nohup sudo python3 raspberrypi_dustzo_controller/MQTT_temperature_publish.py &
 $ sudo python3 raspberrypi_dustzo_controller/MQTT_Dutzo_controller.py
+=======
+# Dutzo_Controller
+>>>>>>> 890f7bc5a9d02a4c19e1c7aac11561f8f81dd764
