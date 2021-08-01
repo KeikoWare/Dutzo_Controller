@@ -21,3 +21,6 @@ COMMANDS:
 {"colorRGB": [0,128,128]}
 {"temperature": {"temp": 23.25,"humidity": 65.5,"tempScale": "celcius"}}
 
+
+$ nohup sudo python3 raspberrypi_dustzo_controller/MQTT_temperature_publish.py &
+$ sudo python3 raspberrypi_dustzo_controller/MQTT_Dutzo_controller.py

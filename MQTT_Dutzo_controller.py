@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 import time
 import board
 import neopixel
@@ -16,43 +16,46 @@ CurMode = "temperature"
 CurColor = (255,0,0)
 # Define color table for temperature scale -10 <-> 100 degree celcius
 def fncTemperatureColor(temperature):
-    baseTemp = 25.0
+    baseTemp = 20.0 # Base temperature (green'ish)
+    cutB = 40.0 # Blue color curve adjustment
+    cutR = 20.0 # Red color curve adjustement
     colR = 0.0
     colG = 0.0
     colB = 0.0
-    tmpT = float(temperature)
+    tmpT = temperature
     # RED
-    if tmpT < baseTemp :
-        x = abs(tmpT - baseTemp)
-        colR = 244 * ( x ** -0.133)
+    if tmpT < (baseTemp + cutR) :
+        x = abs(tmpT - (baseTemp + cutR))
+        # colR = 255 - 8.5 * x
+        colR = 255 - 0.16 * x ** 2
         if colR < 0:
             colR = 0
-        if colR > 255:
-            colR = 255
     else :
         colR = 255
     
     # GREEN
-    if tmpT >= baseTemp :
+    if tmpT == baseTemp :
+        colG = 255
+    elif tmpT > baseTemp :
         x = abs(tmpT - baseTemp)
-        colR = -0.07 * (x ** 2) + 255
+        # colG = 255 - 3.0 * x
+        colG = 255 - 0.25 * x ** 2
         if colG < 0 :
             colG = 0
     else :
         x = abs(tmpT - baseTemp)
-        colR = -0.2 * (x ** 2) + 255
+        colG = 255 - 10.0 * x
         if colG < 0 :
             colG = 0
 
     # BLUE
-    if tmpT > baseTemp :
-        x = abs(tmpT - baseTemp)
-        colB = -0.25 * ( x ** 2) + 255
+    if tmpT > (baseTemp - cutB):
+        x = abs(tmpT - (baseTemp - cutB))
+        colB = 255 - 13.0 * x
         if colB < 0:
             colB = 0
     else :
         colB = 255
-    
     
     return (int(colR), int(colG), int(colB))
 
@@ -69,16 +72,21 @@ def on_message(client, userdata, msg):
     global CurTemp
     global CurMode
     global CurColor
+    global pixels 
     payload = json.loads(msg.payload) # you can use json.loads to convert string to json
     if "temperature" in payload and CurMode == "temperature":
         NewTemp = payload['temperature']['temp']
         print(NewTemp) # then you can check the value
         if NewTemp != CurTemp:
-            CurColor = fncTemperatureColor(temperature)
+            CurColor = fncTemperatureColor(NewTemp)
             pixels.fill(CurColor)
+            #pixels[15] = (0,0,255) # Blue 
+            pixels[16] = (0,255,0) # Green
+            pixels[17] = (255,0,0) # Red 
             pixels.show()
+            print("temp updated ", CurColor)
             CurTemp = NewTemp
-            print("temp updated")
+            
 
     if "colorRGB" in payload and CurMode == "colorRGB":
         NewColor = payload['colorRGB']
@@ -86,7 +94,7 @@ def on_message(client, userdata, msg):
             pixels.fill(NewColor)
             pixels.show()
             CurColor = NewColor
-            print("Color updated")
+            print("Color updated ",NewColor)
 
     if "setMode" in payload:
         CurMode = payload['setMode']['newMode']
@@ -95,13 +103,17 @@ def on_message(client, userdata, msg):
 
 # NeoPixels must be connected to D18.
 dutzo_controller_pin = board.D18
+_pin = board.D18
 # The number of NeoPixels
-num_pixels = 18
+_pixels = 18
 # The order of the pixel colors - RGB or GRB. Some NeoPixels have red and green reversed!
 # For RGBW NeoPixels, simply change the ORDER to RGBW or GRBW.
-ORDER = neopixel.RGB
-pixels = neopixel.NeoPixel(dutzo_controller_pin, num_pixels, brightness=0.2, auto_write=False, pixel_order=ORDER)
+ORDER = neopixel.GRB
+# pixels = neopixel.NeoPixel(dutzo_controller_pin, num_pixels, brightness=0.2, auto_write=False, pixel_order=ORDER)
+pixels = neopixel.NeoPixel(_pin, _pixels, brightness=0.2, auto_write=False, pixel_order=ORDER)
 pixels.fill((0,0,0))
+pixels.show()
+time.sleep(1)
 
 # Initiate MQTT Client
 client = mqtt.Client()
