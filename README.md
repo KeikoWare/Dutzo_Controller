@@ -25,10 +25,16 @@ COMMANDS:
 
 {"setMode": {"newMode": "temperature"}}
 
+{"setMode": {"newMode": "showColorScale"}}
+
+{"setMode": {"newMode": "pixelsOff"}}
+
+
 {"colorRGB": [0,128,128]}
 
 {"temperature": {"temp": 23.25,"humidity": 65.5,"tempScale": "celcius"}}
 
+{"getStatus" : 1}
 
 Commandline start temperature server:
 

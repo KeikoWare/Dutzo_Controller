@@ -41,4 +41,4 @@ while True:
         ret = client.publish("Dutzo",msg)
     else:
         print("Failed to retrieve data from humidity sensor")
-    time.sleep(1)
+    time.sleep(10)

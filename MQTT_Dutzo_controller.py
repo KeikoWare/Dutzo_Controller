@@ -14,11 +14,19 @@ MQTT_MSG="no shit"
 CurTemp = 0
 CurMode = "temperature"
 CurColor = (255,0,0)
+
+#Define function for shutting RGB pixels off 
+def pixelsOff():
+    global CurColor
+    CurColor = (0,0,0)
+    pixels.fill(CurColor)
+    pixels.show()
+
 # Define color table for temperature scale -10 <-> 100 degree celcius
 def fncTemperatureColor(temperature):
     baseTemp = 20.0 # Base temperature (green'ish)
-    cutB = 40.0 # Blue color curve adjustment
-    cutR = 20.0 # Red color curve adjustement
+    cutR = 40.0 # Red color curve adjustement
+    cutB = 20.0 # Blue color curve adjustment
     colR = 0.0
     colG = 0.0
     colB = 0.0
@@ -59,6 +67,41 @@ def fncTemperatureColor(temperature):
     
     return (int(colR), int(colG), int(colB))
 
+# Define test function showin the temperature scale in color 
+def showColorScale():
+    global CurMode
+    global CurColor
+    for i in range(100):
+        print(i)
+        CurColor = fncTemperatureColor(i)
+        pixels.fill(CurColor)
+        j = i // 10
+        if j & 8:
+            pixels[14] = (255,255,255)
+        else:
+            pixels[14] = (0,0,0)
+        
+        if j & 4:
+            pixels[15] = (255,255,255)
+        else:
+            pixels[15] = (0,0,0)
+
+        if j & 2:
+            pixels[16] = (255,255,255)
+        else:
+            pixels[16] = (0,0,0)
+
+        if j & 1:
+            pixels[17] = (255,255,255)
+        else:
+            pixels[17] = (0,0,0)
+        pixels.show()
+        time.sleep(0.5)
+    time.sleep(0.5)
+    pixelsOff()
+
+
+
 # Define on_publish event function
 def on_publish(client, userdata, mid):
     print("Message Published...")
@@ -81,8 +124,8 @@ def on_message(client, userdata, msg):
             CurColor = fncTemperatureColor(NewTemp)
             pixels.fill(CurColor)
             #pixels[15] = (0,0,255) # Blue 
-            pixels[16] = (0,255,0) # Green
-            pixels[17] = (255,0,0) # Red 
+            #pixels[16] = (0,255,0) # Green
+            #pixels[17] = (255,0,0) # Red 
             pixels.show()
             print("temp updated ", CurColor)
             CurTemp = NewTemp
@@ -90,17 +133,24 @@ def on_message(client, userdata, msg):
 
     if "colorRGB" in payload and CurMode == "colorRGB":
         NewColor = payload['colorRGB']
-        if CurColor != NewColor:
-            pixels.fill(NewColor)
-            pixels.show()
-            CurColor = NewColor
-            print("Color updated ",NewColor)
+        pixels.fill(NewColor)
+        pixels.show()
+        CurColor = NewColor
+        print("Color updated ",NewColor)
 
     if "setMode" in payload:
+        pixelsOff()
         CurMode = payload['setMode']['newMode']
         print("Mode changed to ",CurMode)
+        if CurMode == 'showColorScale':
+            showColorScale()
+
+    if "getStatus" in payload:
+        MQTT_MSG = json.dumps({"dutzoStatus": {"currentMode": CurMode,"currentColor": CurColor}})
+        client.publish(MQTT_TOPIC, MQTT_MSG)
 
 
+    
 # NeoPixels must be connected to D18.
 dutzo_controller_pin = board.D18
 _pin = board.D18
